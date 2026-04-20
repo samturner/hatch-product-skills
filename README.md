@@ -28,11 +28,11 @@ Updates pushed to `main` become available the next time the marketplace is refre
   marketplace.json     # makes the repo installable as a marketplace
 skills/
   shaping/             # thinking partner for shaping a problem
-  linear-prd/          # turn shaped thinking into a Linear project (PRD)
-  linear-ticket/       # draft implementation-ready Linear tickets
+  prd/                 # turn shaped thinking into a Linear project (PRD)
+  ticket/              # draft implementation-ready Linear tickets
 ```
 
-The intended flow: `shaping` → `linear-prd` for new features, or go straight to `linear-ticket` for discrete work.
+The intended flow: `shaping` → `prd` for new features, or go straight to `ticket` for discrete work.
 
 ## Adding a new skill
 

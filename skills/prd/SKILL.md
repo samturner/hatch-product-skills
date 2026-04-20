@@ -1,5 +1,5 @@
 ---
-name: linear-prd
+name: prd
 description: Create a PRD (Product Requirements Document) as a new project in Linear, using a standard section structure (Problem, User journey, Requirements, Design reference, Open questions). Use this skill whenever the user asks to create, draft, or spin up a PRD, turn existing thinking into a PRD, write a Linear project for a feature or initiative, or produce a product brief. Trigger even when the user doesn't explicitly say "Linear", since Linear is the destination by default. Also trigger on phrases like "let's turn this into a project", "write this up as a PRD", or "put this in Linear" when the preceding conversation has been shaping a product idea.
 ---
 

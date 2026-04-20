@@ -1,6 +1,6 @@
 ---
 name: shaping
-description: Use this skill whenever the user wants to think through, explore, or shape a problem before turning it into a PRD. Helps extract requirements, surface assumptions, name tensions, capture non-goals and open questions, and (when there's genuine choice) compare solution shapes. Hands off cleanly to the linear-prd skill. Trigger on phrases like "let's shape this", "help me think through", "work through this with me", "I want to explore", "what are we missing", or whenever a PRD draft is being requested but the underlying problem isn't yet clear. Use this before linear-prd, not in parallel.
+description: Use this skill whenever the user wants to think through, explore, or shape a problem before turning it into a PRD. Helps extract requirements, surface assumptions, name tensions, capture non-goals and open questions, and (when there's genuine choice) compare solution shapes. Hands off cleanly to the prd skill. Trigger on phrases like "let's shape this", "help me think through", "work through this with me", "I want to explore", "what are we missing", or whenever a PRD draft is being requested but the underlying problem isn't yet clear. Use this before prd, not in parallel.
 ---
 
 # Shaping
@@ -9,7 +9,7 @@ A lightweight thinking partner for working through a problem before it becomes a
 
 ## What this skill is for
 
-The user is typically a PM thinking out loud. They use this skill in conversation to extract requirements, push on assumptions, and gather material that hands off cleanly to the linear-prd skill. The output is the conversation itself plus a tidy summary at the end. This skill does not produce its own polished documents.
+The user is typically a PM thinking out loud. They use this skill in conversation to extract requirements, push on assumptions, and gather material that hands off cleanly to the prd skill. The output is the conversation itself plus a tidy summary at the end. This skill does not produce its own polished documents.
 
 ## What this skill is not
 
@@ -23,7 +23,7 @@ Push back. Don't just organise what the user says. A good thinking partner does 
 - **Surface unstated assumptions.** Behind most requirements there's a belief about users, the team, or the business. Make these explicit and capture them where useful.
 - **Name tensions between requirements.** When two Rs pull against each other, call it out. "R3 wants speed; R7 wants completeness. Which wins?"
 - **Apply the stakeholder lens.** Periodically ask who needs to weigh in before this is real. Surfaces alignment risk early and feeds Open questions naturally.
-- **Run a pre-mortem before handoff.** Before suggesting linear-prd, ask: "if this ships and underdelivers, what's the most likely reason?" Capture risks the team would otherwise find in retrospectives.
+- **Run a pre-mortem before handoff.** Before suggesting prd, ask: "if this ships and underdelivers, what's the most likely reason?" Capture risks the team would otherwise find in retrospectives.
 
 These are prompts to use at the right moment, not mandatory steps. Read the conversation. If the user is exploring, push more. If they're consolidating, push less. Don't pile every prompt into one turn.
 
@@ -133,15 +133,15 @@ Shaping is "done enough" when:
 - Major assumptions are surfaced
 - Stakeholders who need to weigh in are identified
 
-Before suggesting linear-prd, run a quick pre-mortem:
+Before suggesting prd, run a quick pre-mortem:
 
 > "If this ships and underdelivers in 3 months, what's the most likely reason?"
 
-Capture answers as risks or as new Open questions. Then suggest moving to linear-prd.
+Capture answers as risks or as new Open questions. Then suggest moving to prd.
 
 ## Final summary for handoff
 
-When ready to hand off, produce a tidy summary in the conversation that maps to PRD sections. The linear-prd skill will use this as raw material.
+When ready to hand off, produce a tidy summary in the conversation that maps to PRD sections. The prd skill will use this as raw material.
 
 ```
 ## Problem
@@ -169,7 +169,7 @@ When ready to hand off, produce a tidy summary in the conversation that maps to 
 - [Most likely failure mode]
 ```
 
-Keep R notation in the requirements table so linear-prd can preserve it. The linear-prd skill explicitly accepts custom requirements formats from shaping.
+Keep R notation in the requirements table so prd can preserve it. The prd skill explicitly accepts custom requirements formats from shaping.
 
 ## Communication
 

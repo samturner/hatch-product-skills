@@ -1,5 +1,5 @@
 ---
-name: linear-ticket
+name: ticket
 description: Create well-defined, implementation-ready Linear tickets from a problem description. Use whenever the user wants to create, draft, file, write up, or log a Linear ticket, issue, or bug — even when they don't say "Linear" explicitly. Trigger on phrases like "let's file a ticket for X", "write this up as an issue", "I need to log a bug about Y", "create a ticket for this", or when the conversation has clearly identified a piece of work that needs tracking. The skill asks clarifying questions, explores the relevant codebase to ground the ticket in reality, and drafts a ticket so well-defined that an engineer or AI coding agent could pick it up with minimal back-and-forth.
 ---
 
