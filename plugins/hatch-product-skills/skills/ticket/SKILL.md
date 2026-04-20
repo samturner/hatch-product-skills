@@ -57,22 +57,9 @@ Search Linear for existing issues related to this ticket. Note any that are dupl
 
 ## Step 3: Prioritise
 
-Assess **impact** and **urgency** independently, then map to a level:
+Assess **impact** and **urgency** independently, then map to a priority level using the team's shared rubric. Read `plugins/hatch-product-skills/shared/priority.md` for the levels and the pressure-test questions.
 
-| Priority | When to use | Examples |
-|----------|-------------|----------|
-| **Urgent** | Users blocked, no workaround. Needs immediate attention. | App crash, broken auth, data loss, payment failure |
-| **High** | Significant impact on a core flow or key metric. Workaround exists but is painful. | Broken core flow with manual workaround, sync failures affecting multiple customers |
-| **Medium** | Meaningful improvement to UX or internal efficiency. Not blocking anyone. | UI inconsistency in a common flow, missing validation, perf issue |
-| **Low** | Nice-to-have. Cosmetic, minor friction, or rare edge case. | Copy tweak, minor styling, rare edge case |
-
-When in doubt, bias toward **Medium**. Show your reasoning to the user — don't just assign a level silently.
-
-**Pressure-test your initial assessment with these questions:**
-- Is this a **one-time action** (e.g. setup, onboarding) or a **recurring flow**? One-time flows with workarounds skew lower.
-- Has anyone **actually reported this in production**, or is it only visible in internal testing? Testing-only issues skew lower.
-- Is there a **manual workaround** the team can use? Available workarounds skew lower.
-- For styling/polish: don't reflexively default to Low. Customer-facing UI quality matters — broken windows affect product perception. Assess based on visibility and surface area.
+Show your reasoning to the user. Don't just assign a level silently.
 
 ## Step 4: Draft the ticket
 

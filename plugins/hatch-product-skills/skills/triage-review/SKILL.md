@@ -13,6 +13,7 @@ Works through Linear's Triage column and does the scutwork so the PM can focus o
 - **Scope:** every ticket currently in Triage status for that team
 - **Info label:** `needs-info` — applied to tickets lacking enough detail to prioritise
 - **Duplicate label:** `possible-duplicate` — applied to tickets that look like existing work
+- **Landing project:** `Bugs, polish, tech debt and incidents` ([link](https://linear.app/hatchteam/project/bugs-polish-tech-debt-and-incidents-35fd3c010f52/overview)). The default home for tickets moved out of Triage. Look up by name to get the project ID.
 
 ## Run modes
 
@@ -58,28 +59,13 @@ List the specific gap(s). This goes into the end-of-run report so the PM can fol
 
 **c. If it has enough info, what priority?**
 
-Use the team's standard rubric:
-
-| Priority | When to use | Examples |
-|----------|-------------|----------|
-| **Urgent** | Users blocked, no workaround. Needs immediate attention. | App crash, broken auth, data loss, payment failure |
-| **High** | Significant impact on a core flow or key metric. Workaround exists but painful. | Broken core flow with manual workaround, sync failures hitting multiple customers |
-| **Medium** | Meaningful improvement to UX or internal efficiency. Not blocking anyone. | UI inconsistency in a common flow, missing validation, perf issue |
-| **Low** | Nice-to-have. Cosmetic, minor friction, or rare edge case. | Copy tweak, minor styling, rare edge case |
-
-When in doubt, bias toward **Medium**. Don't invent urgency.
-
-**Pressure-test the call with:**
-- One-time flow (setup, onboarding) vs recurring? One-time skews lower.
-- Actually reported in production, or only internal testing? Testing-only skews lower.
-- Manual workaround available? Yes skews lower.
-- Customer-facing visual polish: don't default to Low reflexively. Visible surface area matters.
+Use the team's shared rubric. Read `plugins/hatch-product-skills/shared/priority.md` for the levels and the pressure-test questions. When in doubt, bias toward **Medium**.
 
 ### 3. Build the set of proposed changes
 
 For each ticket, the outcome is one of:
 
-- **Prioritise and move out of Triage.** Has enough info, no duplicate concern. Set priority, move status from Triage to the team's standard next-stage status (usually Backlog — look it up, don't guess).
+- **Prioritise and move out of Triage.** Has enough info, no duplicate concern. Set priority, move status from Triage to the team's standard next-stage status (usually Backlog, look it up, don't guess), and add the ticket to the landing project (`Bugs, polish, tech debt and incidents` by default). If the ticket clearly belongs to a different existing project (for example it's part of a shaped PRD), add it there instead and note the choice in the report.
 - **Label `needs-info`, leave in Triage.** Missing info to prioritise. Apply label. Don't comment on the ticket (team preference is label only).
 - **Label `possible-duplicate`, link the candidate, leave in Triage.** Apply label, add a relates-to link to the candidate duplicate, leave for the PM to confirm and merge.
 
@@ -97,7 +83,8 @@ When applying (interactive after approval, or scheduled):
 
 1. Look up the relevant label IDs (`needs-info`, `possible-duplicate`) for the team. If a label doesn't exist, ask the PM before creating it.
 2. Look up the status ID for the next stage (usually Backlog).
-3. Apply label changes, priority changes, status changes, and duplicate relations.
+3. Look up the landing project ID (`Bugs, polish, tech debt and incidents`) by name. If it can't be found, stop and ask the PM before proceeding.
+4. Apply label changes, priority changes, status changes, project assignment, and duplicate relations.
 
 ### 5. Report
 

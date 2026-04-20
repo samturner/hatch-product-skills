@@ -1,6 +1,6 @@
 ---
 name: prd
-description: Create a PRD (Product Requirements Document) as a new project in Linear, using a standard section structure (Problem, User journey, Requirements, Design reference, Open questions). Use this skill whenever the user asks to create, draft, or spin up a PRD, turn existing thinking into a PRD, write a Linear project for a feature or initiative, or produce a product brief. Trigger even when the user doesn't explicitly say "Linear", since Linear is the destination by default. Also trigger on phrases like "let's turn this into a project", "write this up as a PRD", or "put this in Linear" when the preceding conversation has been shaping a product idea.
+description: Create or update a PRD (Product Requirements Document) as a project in Linear, using a standard section structure (Problem, User journey, Requirements, Non-goals, Design reference, Open questions, Assumptions and risks). Use this skill whenever the user asks to create, draft, or spin up a PRD, turn existing thinking into a PRD, write a Linear project for a feature or initiative, produce a product brief, or update an existing PRD with new decisions from shaping. Trigger even when the user doesn't explicitly say "Linear", since Linear is the destination by default. Also trigger on phrases like "let's turn this into a project", "write this up as a PRD", or "put this in Linear" when the preceding conversation has been shaping a product idea.
 ---
 
 # Linear PRD
@@ -9,21 +9,33 @@ Creates a new project in Linear's **Product Eng & ML** team, populated with a st
 
 ## Workflow
 
-### 1. Gather context from the conversation
+### 1. Check for an existing PRD
 
-Before asking the user anything, scan back through the conversation for content that maps to each PRD section. Most of the time the conversation already contains useful raw material, because the user has been thinking out loud, aligning with collaborators, or quoting messages from the team.
+Before gathering context, check whether a PRD already exists for this work. Search Linear projects in the Product Eng & ML team for a matching name or topic. This is especially likely when the user has been continuing a shaping session.
 
-Map what you find to these sections:
+If a matching project exists, stop and ask the user whether to update it or create a new one. Updating is the default for continuing work. See "Updating an existing PRD" below for the update flow.
+
+If nothing matches, proceed to Step 2.
+
+### 2. Gather context from the conversation
+
+Scan back through the conversation for content that maps to each PRD section.
+
+If the conversation includes a handoff summary from the shaping skill (sections like Problem, User journey, Requirements with R IDs, Non-goals, Open questions, Assumptions, Risks), use that as the primary source. It's already structured for this purpose. Carry over the R notation, non-goals, assumptions and risks verbatim.
+
+Otherwise, pull raw material from the broader conversation and map to these sections:
 
 - **Problem**: any framing of what's broken, missing, or worth doing, and why now
 - **User journey**: steps, flows, or user actions the conversation has touched on
 - **Requirements**: specific things the team has aligned on (look for "we need X", "it should do Y", or confirmation language from stakeholders)
+- **Non-goals**: anything the team has explicitly said is out of scope
 - **Design reference**: any mention of Figma, mocks, or prototypes
 - **Open questions**: anything flagged as unresolved, TBD, or "need to check with someone"
+- **Assumptions and risks**: load-bearing beliefs that should be tested, plus likely failure modes
 
 If a section has nothing useful in context, mark it as a gap.
 
-### 2. Show a draft before creating
+### 3. Show a draft before creating
 
 Share a draft preview with the user containing:
 
@@ -35,13 +47,13 @@ Wait for confirmation before creating. PRDs in Linear become a source of truth f
 
 If the project name isn't obvious from context, propose 2 or 3 options rather than guessing.
 
-### 3. Find the team
+### 4. Find the team
 
 The Linear team is always **Product Eng & ML**. List the Linear teams, match the name (case-insensitive), and use that team ID.
 
 If the team can't be found, stop and ask the user which team to use. Don't silently pick a fallback.
 
-### 4. Find the Shaping project status
+### 5. Find the Shaping project status
 
 The project must always be created in the **Shaping** state. Linear projects have a status field that points to a named project status (Backlog, Planned, In Progress, etc., plus any custom statuses the workspace has added). "Shaping" is a custom status used by this team.
 
@@ -49,7 +61,7 @@ Look up the available project statuses for the Product Eng & ML team and find th
 
 If no "Shaping" status exists, stop and ask the user how to proceed. Don't fall back to Backlog or Planned silently, because the team relies on the Shaping state to filter work in progress.
 
-### 5. Create the project
+### 6. Create the project
 
 Create the Linear project with:
 
@@ -81,11 +93,17 @@ Use this structure for the project body. Keep it clean, because the team will re
 
 ## Requirements
 
-| Requirement | Priority | Notes |
-| --- | --- | --- |
-| [aligned requirement] | Must / Should / Could | [context] |
+| ID | Requirement | Priority | Notes |
+| --- | --- | --- | --- |
+| R0 | [aligned requirement] | Must / Should / Could | [context] |
 
 [If no requirements are aligned yet: _TBD: to be filled in after shaping._]
+
+## Non-goals
+
+- [Thing we're explicitly not doing]
+
+[If none: _None captured yet._]
 
 ## Design reference
 
@@ -95,6 +113,13 @@ _Paste Figma link here when ready. Linear will auto-embed it._
 
 - [Question 1]
 - [Question 2]
+
+## Assumptions and risks
+
+- **Assumption:** [load-bearing belief that should be tested]
+- **Risk:** [likely failure mode, typically surfaced by the shaping pre-mortem]
+
+[If none: _None captured yet._]
 ~~~
 
 ### Notes on each section
@@ -103,11 +128,15 @@ _Paste Figma link here when ready. Linear will auto-embed it._
 
 **User journey.** Dot points with sub-points for branching. If the flow is genuinely simple (2 or 3 steps), that's fine. Don't invent complexity.
 
-**Requirements.** Only things the team has actually aligned on. Aspirations or ideas still being debated belong in Open questions. If the user has a different requirements format already established (for example from their shaping skill or a template in the conversation), use that format instead of the default table.
+**Requirements.** Only things the team has actually aligned on. Aspirations or ideas still being debated belong in Open questions. The default table uses an ID column (R0, R1, ...) so requirements can be referenced consistently. If shaping has already assigned R IDs, preserve them verbatim. If the user has a different requirements format already established, use that instead.
+
+**Non-goals.** Explicit things out of scope. The strongest defence against scope drift later. Carry across from shaping when present. If the team hasn't articulated any yet, leave the placeholder rather than inventing them.
 
 **Design reference.** Leave as placeholder text. The user pastes the Figma URL later and Linear handles the embed natively.
 
 **Open questions.** Genuine unresolved items for the team to work through together. Not rhetorical prompts, and not things you could answer yourself.
+
+**Assumptions and risks.** Load-bearing beliefs the team should test, plus failure modes surfaced by the shaping pre-mortem. Carry across from shaping when present. If none have been surfaced, leave the placeholder.
 
 ## Writing style
 
@@ -122,8 +151,19 @@ Specifics:
 - Avoid throat-clearing phrases like "let's dive in", "in the world of", "navigate the landscape", "delve into".
 - Write plainly. Short sentences are fine. Contractions are fine. The goal is content that reads like the user wrote it themselves at their desk.
 
+## Updating an existing PRD
+
+Triggered when Step 1 finds a matching project and the user confirms update rather than create. The flow:
+
+1. Fetch the existing project and read its current body.
+2. Draft the delta (what's changing in each section) and show it to the user before applying.
+3. When applying, preserve anything not explicitly being changed. Don't overwrite sections the conversation hasn't touched.
+4. Don't change the project's team or status. If the project is no longer in Shaping, don't move it back.
+5. Share the updated project URL back to the user.
+
 ## What to avoid
 
+- Don't create a duplicate project when one already exists for this work. Update it instead.
 - Don't create the project before the user has seen a draft and confirmed.
 - Don't create the project in any state other than Shaping.
 - Don't pad thin sections with filler to make them look substantial. A short honest section beats a bloated one.
