@@ -1,6 +1,6 @@
 ---
 name: triage-review
-description: Review tickets sitting in Linear's Triage status. For each ticket, either prioritise and move it out of Triage (if it has enough info) or flag it for clarification (if it doesn't). Also catches likely duplicates. Use when the user asks to "review triage", "triage the backlog", "clean up triage", or when running as a scheduled task. Default team is Product Eng & ML — can be overridden.
+description: Review tickets sitting in Linear's Triage status. For each ticket, either prioritise and move it out of Triage (if it has enough info) or flag it for clarification (if it doesn't). Also catches likely duplicates. Use when the user asks to "review triage", "triage the backlog", "clean up triage", or when running as a scheduled task. Also supports a test mode that produces the full proposed-changes report without touching Linear — trigger with phrases like "test", "dry run", "preview", or "show me what you'd change". Default team is Product Eng & ML — can be overridden.
 ---
 
 # Triage review
@@ -13,6 +13,16 @@ Works through Linear's Triage column and does the scutwork so the PM can focus o
 - **Scope:** every ticket currently in Triage status for that team
 - **Info label:** `needs-info` — applied to tickets lacking enough detail to prioritise
 - **Duplicate label:** `possible-duplicate` — applied to tickets that look like existing work
+
+## Run modes
+
+Three modes. Pick based on how the skill was invoked.
+
+- **Interactive:** user asked for a triage review directly in chat. Produce the proposed-changes table, get approval, then apply.
+- **Scheduled:** run by the scheduler. Apply changes directly and produce the report.
+- **Test mode:** user asked for a test, dry run, preview, or "show me what you'd change". Produce the full proposed-changes report and **do not touch Linear** — no label changes, no priority changes, no status changes, no duplicate links. Prefix the output with a clear header so the user knows nothing was applied (see Step 5).
+
+Read the user's invocation to decide. "Review triage" → interactive. "Test the triage review" or "dry run triage" → test mode. Anything run without a user prompt → scheduled.
 
 ## Workflow
 
@@ -75,13 +85,15 @@ For each ticket, the outcome is one of:
 
 A ticket can receive both labels (e.g. possible duplicate *and* missing info).
 
-### 4. Apply (with a gate for interactive runs)
+### 4. Apply (behaviour depends on run mode)
 
-**If invoked interactively:** show the proposed changes to the PM as a compact table — ticket ID, title, proposed action, rationale. Get approval before applying. Allow the PM to skip specific tickets.
+**Test mode:** skip this step entirely. Go straight to Step 5 and produce the report with the test-mode header. Do not touch Linear.
 
-**If run by the scheduler:** apply directly. The PM reviews the end-of-run report and can reverse anything they disagree with.
+**Interactive:** show the proposed changes to the PM as a compact table — ticket ID, title, proposed action, rationale. Get approval before applying. Allow the PM to skip specific tickets.
 
-When applying:
+**Scheduled:** apply directly. The PM reviews the end-of-run report and can reverse anything they disagree with.
+
+When applying (interactive after approval, or scheduled):
 
 1. Look up the relevant label IDs (`needs-info`, `possible-duplicate`) for the team. If a label doesn't exist, ask the PM before creating it.
 2. Look up the status ID for the next stage (usually Backlog).
@@ -89,7 +101,15 @@ When applying:
 
 ### 5. Report
 
-Output a compact markdown report:
+In **test mode**, prefix the report with:
+
+```
+> **TEST MODE — nothing has been changed in Linear.**
+```
+
+And change the section headings from past tense to conditional — "Would prioritise and move out", "Would flag `needs-info`", "Would flag `possible-duplicate`" — so it's unambiguous these are proposals.
+
+Otherwise, output a compact markdown report:
 
 ```
 # Triage review — [date]

@@ -1,6 +1,6 @@
 ---
 name: feedback-review
-description: Review recent customer feedback from Slack and produce a themed digest with supporting quotes, volume signal, and what's changing vs the previous review. Use when the user asks for a "feedback review", "feedback digest", "feedback summary", wants to see "what customers have been saying" over a period, or when running as a scheduled task against the feedback channel. Default channel is #feedback, default window is the last 7 days — both can be overridden.
+description: Review recent customer feedback from Slack and produce a themed digest with supporting quotes, volume signal, and what's changing vs the previous review. Use when the user asks for a "feedback review", "feedback digest", "feedback summary", wants to see "what customers have been saying" over a period, or when running as a scheduled task against the feedback channel. Also supports a test mode that produces the full digest without posting anywhere — trigger with phrases like "test", "dry run", "preview", or "show me what it would post". Default channel is #feedback, default window is the last 7 days — both can be overridden.
 ---
 
 # Feedback review
@@ -12,6 +12,16 @@ Produces a structured digest of customer feedback from Slack so the team has a s
 - **Channel:** `#feedback` — override if the user specifies a different one.
 - **Window:** last 7 days — override if the user asks for a different period.
 - **Canvas:** `Feedback digest` in the same channel, used as the running history and the comparison source.
+
+## Run modes
+
+Three modes. Pick based on how the skill was invoked.
+
+- **Interactive:** user asked for a review directly in chat. Produce the digest, show it as a draft, get approval, then post.
+- **Scheduled:** run by the scheduler. Produce the digest and post automatically (no approval step).
+- **Test mode:** user asked for a test, dry run, preview, or "show me what it would post". Produce the full digest, show it in chat, and **do not touch Slack** — no canvas update, no channel message. Prefix the output with a clear header so the user knows nothing was posted (see Step 6).
+
+Read the user's invocation to decide. "Run a feedback review" → interactive. "Test the feedback review" or "dry run the feedback review" → test mode. Anything run without a user prompt → scheduled.
 
 ## Workflow
 
@@ -86,13 +96,23 @@ All permalinks should point to the Slack **thread** where the feedback lives, so
 
 Keep it scannable. The team will read this quickly on a Monday morning — favour concrete over comprehensive.
 
-### 6. Post the digest
+### 6. Deliver the digest
 
-**If invoked interactively (on-demand run):** show the digest to the user first, let them edit or approve, then post.
+Behaviour depends on the run mode (see "Run modes" above).
 
-**If run by the scheduler:** post automatically without review.
+**Test mode:** show the full digest in chat, prefixed with:
 
-To post:
+```
+> **TEST MODE — nothing has been posted to Slack.**
+```
+
+Stop there. Do not update the canvas. Do not post to the channel.
+
+**Interactive:** show the digest to the user first, let them edit or approve, then post.
+
+**Scheduled:** post automatically without review.
+
+To post (interactive after approval, or scheduled):
 
 1. Update the `Feedback digest` canvas in the channel — prepend this week's section above the previous one so history reads newest-first.
 2. Post a short message in the channel linking to the canvas with the TL;DR. Example: `Weekly feedback digest is up — TL;DR: [one sentence]. Full canvas: [link]`.
