@@ -1,8 +1,8 @@
 {
   "name": "hatch-product-skills",
   "owner": {
-    "name": "Hatch Product Team",
-    "email": "product@hatch.team"
+    "name": "Sam Turner",
+    "email": "sam@hatch.team"
   },
   "plugins": [
     {
