@@ -27,9 +27,12 @@ Updates pushed to `main` become available the next time the marketplace is refre
   plugin.json          # plugin manifest
   marketplace.json     # makes the repo installable as a marketplace
 skills/
-  weekly-review/
-    SKILL.md           # one skill per folder
+  shaping/             # thinking partner for shaping a problem
+  linear-prd/          # turn shaped thinking into a Linear project (PRD)
+  linear-ticket/       # draft implementation-ready Linear tickets
 ```
+
+The intended flow: `shaping` → `linear-prd` for new features, or go straight to `linear-ticket` for discrete work.
 
 ## Adding a new skill
 
