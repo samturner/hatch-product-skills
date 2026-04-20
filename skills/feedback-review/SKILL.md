@@ -33,7 +33,7 @@ For each theme, capture:
 
 - Theme name
 - Rough volume (number of distinct pieces of feedback this window)
-- 2-3 representative quotes with author and Slack permalink
+- 2-3 representative quotes with author and a Slack permalink to the **thread** (not the individual message), so the reader can click through and see the full discussion, replies, and any context from the team. If the feedback is a standalone message with no thread, link to the message itself.
 - 1-line summary of the underlying issue
 
 ### 3. Load the prior digest
@@ -73,13 +73,15 @@ Format as markdown:
 ### [Theme name] — [volume] mentions
 [1-line summary]
 
-> [Quote 1] — [@author](permalink)
-> [Quote 2] — [@author](permalink)
+> [Quote 1] — [@author](thread-permalink)
+> [Quote 2] — [@author](thread-permalink)
 
 ### [Next theme...]
 
 ## Notable one-offs
-- [Short description] — [@author](permalink)
+- [Short description] — [@author](thread-permalink)
+
+All permalinks should point to the Slack **thread** where the feedback lives, so the reader can click through and see the full conversation in context.
 ```
 
 Keep it scannable. The team will read this quickly on a Monday morning — favour concrete over comprehensive.
