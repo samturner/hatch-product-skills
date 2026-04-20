@@ -1,0 +1,129 @@
+---
+name: triage-review
+description: Review tickets sitting in Linear's Triage status. For each ticket, either prioritise and move it out of Triage (if it has enough info) or flag it for clarification (if it doesn't). Also catches likely duplicates. Use when the user asks to "review triage", "triage the backlog", "clean up triage", or when running as a scheduled task. Default team is Product Eng & ML — can be overridden.
+---
+
+# Triage review
+
+Works through Linear's Triage column and does the scutwork so the PM can focus on judgement calls. Designed to run weekly as a scheduled task, but also invokable on demand.
+
+## Defaults
+
+- **Team:** Product Eng & ML (look up by name, case-insensitive, to get the team ID)
+- **Scope:** every ticket currently in Triage status for that team
+- **Info label:** `needs-info` — applied to tickets lacking enough detail to prioritise
+- **Duplicate label:** `possible-duplicate` — applied to tickets that look like existing work
+
+## Workflow
+
+### 1. Pull the triage queue
+
+List all tickets currently in Triage status for the target team. Keep the list — you'll report against it at the end.
+
+If Triage is empty, return a one-liner ("Triage is clear, nothing to review") and stop.
+
+### 2. For each ticket, assess three things
+
+**a. Is it a probable duplicate?**
+
+Search Linear for open tickets with similar titles or descriptions. Be conservative. A "probable duplicate" is where a reasonable reader would say "this is already tracked" — not merely related or thematically close.
+
+If yes, note the candidate duplicate's ID and title. Don't silently merge.
+
+**b. Does it have enough info to prioritise?**
+
+A ticket has enough info when:
+
+- For a **bug**: the problem is clear, who's affected is clear, and there's either a repro path or specific enough detail to investigate
+- For a **feature/improvement**: the problem it solves is articulated, who benefits is clear, and there's at least a solution direction
+
+A ticket lacks enough info when any of these are missing:
+
+- No clear problem statement (just "X is broken" with no detail)
+- No signal on impact (one user? many? blocking a flow? a minor annoyance?)
+- Bug with no repro and no environment context
+- Feature request with no underlying problem, only a proposed solution
+
+List the specific gap(s). This goes into the end-of-run report so the PM can follow up.
+
+**c. If it has enough info, what priority?**
+
+Use the team's standard rubric:
+
+| Priority | When to use | Examples |
+|----------|-------------|----------|
+| **Urgent** | Users blocked, no workaround. Needs immediate attention. | App crash, broken auth, data loss, payment failure |
+| **High** | Significant impact on a core flow or key metric. Workaround exists but painful. | Broken core flow with manual workaround, sync failures hitting multiple customers |
+| **Medium** | Meaningful improvement to UX or internal efficiency. Not blocking anyone. | UI inconsistency in a common flow, missing validation, perf issue |
+| **Low** | Nice-to-have. Cosmetic, minor friction, or rare edge case. | Copy tweak, minor styling, rare edge case |
+
+When in doubt, bias toward **Medium**. Don't invent urgency.
+
+**Pressure-test the call with:**
+- One-time flow (setup, onboarding) vs recurring? One-time skews lower.
+- Actually reported in production, or only internal testing? Testing-only skews lower.
+- Manual workaround available? Yes skews lower.
+- Customer-facing visual polish: don't default to Low reflexively. Visible surface area matters.
+
+### 3. Build the set of proposed changes
+
+For each ticket, the outcome is one of:
+
+- **Prioritise and move out of Triage.** Has enough info, no duplicate concern. Set priority, move status from Triage to the team's standard next-stage status (usually Backlog — look it up, don't guess).
+- **Label `needs-info`, leave in Triage.** Missing info to prioritise. Apply label. Don't comment on the ticket (team preference is label only).
+- **Label `possible-duplicate`, link the candidate, leave in Triage.** Apply label, add a relates-to link to the candidate duplicate, leave for the PM to confirm and merge.
+
+A ticket can receive both labels (e.g. possible duplicate *and* missing info).
+
+### 4. Apply (with a gate for interactive runs)
+
+**If invoked interactively:** show the proposed changes to the PM as a compact table — ticket ID, title, proposed action, rationale. Get approval before applying. Allow the PM to skip specific tickets.
+
+**If run by the scheduler:** apply directly. The PM reviews the end-of-run report and can reverse anything they disagree with.
+
+When applying:
+
+1. Look up the relevant label IDs (`needs-info`, `possible-duplicate`) for the team. If a label doesn't exist, ask the PM before creating it.
+2. Look up the status ID for the next stage (usually Backlog).
+3. Apply label changes, priority changes, status changes, and duplicate relations.
+
+### 5. Report
+
+Output a compact markdown report:
+
+```
+# Triage review — [date]
+
+**Reviewed:** [N] tickets in Triage.
+
+## Prioritised and moved out
+- **[Priority]** — [Ticket ID]: [title] — [1-line rationale]
+
+## Flagged `needs-info`
+- [Ticket ID]: [title] — missing: [specific gap(s)]
+
+## Flagged `possible-duplicate`
+- [Ticket ID]: [title] — likely duplicate of [Other ID]: [other title]
+
+## Notes
+[Anything worth surfacing. Omit this section if there's nothing to say.]
+```
+
+Keep it scannable. The PM reads this in Claude — no need for preamble or sign-off.
+
+## Writing style
+
+- Australian English (organise, behaviour, prioritise)
+- Plain language. Short sentences are fine.
+- No em dashes (—) or en dashes (–). Use full stops, commas, or parentheses.
+- No throat-clearing ("let's dive in", "in the world of")
+- Rationale lines should be specific ("blocks checkout for all users on Safari") rather than generic ("important bug")
+
+## What to avoid
+
+- Don't silently merge duplicates. Label and link so the PM decides.
+- Don't comment on tickets. Team preference is label only.
+- Don't prioritise a ticket you can't confidently assess. When in doubt, label `needs-info` and list the gap.
+- Don't invent urgency to make the queue look busier.
+- Don't skip the duplicate check. Dupes in the backlog cost more than they look like they should.
+- Don't report on tickets you didn't actually touch. The report should match what happened in Linear.
