@@ -27,7 +27,7 @@ Updates pushed to `main` become available the next time the marketplace is refre
 ## Skills
 
 ```
-skills/
+plugins/hatch-product-skills/skills/
   shaping/           # thinking partner for shaping a problem
   prd/               # turn shaped thinking into a Linear project (PRD)
   ticket/            # draft implementation-ready Linear tickets
@@ -41,7 +41,7 @@ Intended flow: `shaping` → `prd` for new features, or straight to `ticket` for
 
 The goal is shared standards, so changes should reflect how the team actually wants to work, not personal preferences.
 
-1. Create `skills/<skill-name>/SKILL.md`.
+1. Create `plugins/hatch-product-skills/skills/<skill-name>/SKILL.md`.
 2. Frontmatter must have `name` and `description`. The description determines when the skill auto-triggers, so be specific about the trigger phrases.
 3. Body is the instructions Claude follows when the skill runs.
 4. Open a PR so the team can review before it becomes part of the shared workflow.
