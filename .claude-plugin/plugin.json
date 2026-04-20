@@ -1,9 +1,9 @@
 {
   "name": "hatch-product-skills",
   "version": "0.1.0",
-  "description": "Sam's personal workflow skills for product work at Hatch.",
+  "description": "Codified PM workflows at Hatch. Shared skills for shaping problems, writing PRDs, and filing tickets so every PM produces consistent output.",
   "author": {
-    "name": "Sam Turner",
-    "email": "sam@hatch.team"
+    "name": "Hatch Product Team",
+    "email": "product@hatch.team"
   }
 }
