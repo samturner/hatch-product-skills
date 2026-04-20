@@ -28,12 +28,13 @@ Updates pushed to `main` become available the next time the marketplace is refre
 
 ```
 skills/
-  shaping/     # thinking partner for shaping a problem
-  prd/         # turn shaped thinking into a Linear project (PRD)
-  ticket/      # draft implementation-ready Linear tickets
+  shaping/           # thinking partner for shaping a problem
+  prd/               # turn shaped thinking into a Linear project (PRD)
+  ticket/            # draft implementation-ready Linear tickets
+  feedback-review/   # weekly themed digest of Slack customer feedback
 ```
 
-Intended flow: `shaping` → `prd` for new features, or straight to `ticket` for discrete work.
+Intended flow: `shaping` → `prd` for new features, or straight to `ticket` for discrete work. `feedback-review` runs weekly (usually as a scheduled task) and feeds back into the rest of the loop.
 
 ## Contributing a skill
 
