@@ -1,0 +1,14 @@
+{
+  "name": "hatch-product-skills",
+  "owner": {
+    "name": "Sam Turner",
+    "email": "sam@hatch.team"
+  },
+  "plugins": [
+    {
+      "name": "hatch-product-skills",
+      "source": ".",
+      "description": "Sam's personal workflow skills for product work at Hatch."
+    }
+  ]
+}

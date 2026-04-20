@@ -1,0 +1,9 @@
+{
+  "name": "hatch-product-skills",
+  "version": "0.1.0",
+  "description": "Sam's personal workflow skills for product work at Hatch.",
+  "author": {
+    "name": "Sam Turner",
+    "email": "sam@hatch.team"
+  }
+}
