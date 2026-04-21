@@ -33,9 +33,10 @@ plugins/hatch-product-skills/skills/
   ticket/            # draft implementation-ready Linear tickets
   triage-review/     # weekly sweep of Linear's Triage column
   feedback-review/   # weekly themed digest of Slack customer feedback
+  cycle-planning/    # fortnightly OKR2 update in the Notion cycle doc
 ```
 
-Intended flow: `shaping` → `prd` for new features, or straight to `ticket` for discrete work. `triage-review` and `feedback-review` run weekly (usually as scheduled tasks) and feed back into the rest of the loop.
+Intended flow: `shaping` → `prd` for new features, or straight to `ticket` for discrete work. `triage-review` and `feedback-review` run weekly (usually as scheduled tasks) and feed back into the rest of the loop. `cycle-planning` runs once per fortnight, ahead of the LT cycle review.
 
 ## Contributing a skill
 
