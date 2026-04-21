@@ -38,13 +38,26 @@ There's no required order. The two inform each other.
 
 If the user is continuing a session (a Linear PRD already exists for this work), reload the relevant context from Linear before continuing so the conversation stays in sync with the source of truth.
 
+This workspace is upstream of Linear. Shaping happens here. Resolved decisions live as numbered ADRs in each project's `decisions/` folder. The PRD body is what gets written into Linear. Don't duplicate Linear issue or task tracking in the local repo.
+
+## Capability distillation
+
+Before building the R table, anchor the conversation on capabilities. Ask the user:
+
+> "What are the 4–6 key capabilities this project ships? List them as plain sentences."
+
+Capabilities are the big-rock user-visible or system-visible things the project is on the hook to deliver. They're not solutions, not tasks, not flags. Write them down, agree on them, then derive the R table from there.
+
+Skipping this step is the main reason R tables balloon to 20+ rows and need two rounds of reshuffling. Do it early.
+
 ## Requirements (R)
 
-A numbered set defining the problem space.
+A numbered set defining the problem space, derived from the capabilities above.
 
 - R0, R1, R2... are members of the requirements set
 - Negotiated collaboratively, not auto-filled
 - Track status per row
+- A typical shaping lands at 6–10 Rs. If you're above 15, you're probably writing execution details — go back and consolidate
 
 ### Status values
 
@@ -54,10 +67,17 @@ A numbered set defining the problem space.
 | Must-have | Required for the work to be considered done |
 | Should-have | Strong preference, may be cut under pressure |
 | Could-have | Nice-to-have, easy to drop |
-| Open question | Not yet decided whether this is required |
-| Non-goal | Explicitly out of scope |
 
-Non-goals deserve real attention. They are the strongest defence against scope drift later. If the conversation reveals what this work is *not* about, capture it as a non-goal rather than letting it sit implicit.
+Non-goals and open questions are **not** statuses. They live as sibling bulleted lists (see Handoff section). Mixing them into the R table makes the document cluttered and hard to read. Non-goals still deserve real attention; they're the strongest defence against scope drift later, so capture them as a separate list as soon as they surface.
+
+### Capability vs execution detail
+
+R states what's needed, not how it's solved. Two concrete tests to apply to every R:
+
+- **Drop test.** If this R were dropped, would the project still be the same thing? If yes, it's execution detail, not a capability. Cut it.
+- **Merge test.** If two Rs are different aspects of the same thing a user does, they're probably one R. Group small Rs into bigger capabilities.
+
+Common smells: "mobile-first", "attribution tracked", "API returns JSON", "analytics event fires". These are execution details masquerading as requirements. Either roll them into the Notes column of the capability they support, or cut them.
 
 ### Principles
 
@@ -127,21 +147,22 @@ This applies whenever the user has already created a PRD and comes back to shape
 
 Shaping is "done enough" when:
 
-- Requirements feel stable, or what's still open is explicitly captured as Open question
+- Requirements feel stable, or what's still open is explicitly captured as an open question
 - Either no shape is needed, or one shape is selected
-- Non-goals are listed
-- Major assumptions are surfaced
+- Out-of-scope items are listed
+- Major assumptions are surfaced (live in R Notes unless load-bearing enough to be their own R)
+- Decisions made during shaping are captured with their reason
 - Stakeholders who need to weigh in are identified
 
 Before suggesting prd, run a quick pre-mortem:
 
 > "If this ships and underdelivers in 3 months, what's the most likely reason?"
 
-Capture answers as risks or as new Open questions. Then suggest moving to prd.
+Capture answers as open questions or as decisions the team should make. Then suggest moving to prd.
 
 ## Final summary for handoff
 
-When ready to hand off, produce a tidy summary in the conversation that maps to PRD sections. The prd skill will use this as raw material.
+When ready to hand off, produce a tidy summary in the conversation that maps directly to the Hatch PRD section structure. The prd skill consumes this verbatim, so keep the headings and table shapes identical.
 
 ```
 ## Problem
@@ -152,24 +173,37 @@ When ready to hand off, produce a tidy summary in the conversation that maps to 
 - Step 2
   - Edge case: ...
 
-## Requirements
-[R table with status and notes, as built during shaping]
+## Context
+[Optional, project-specific. Use when the reader needs a domain primer before the requirements make sense — e.g. institution tiers, user cohorts, existing system quirks. Skip if not needed.]
 
-## Non-goals
+## Requirements
+
+| ID | Requirement | Status | Notes |
+|---|---|---|---|
+| R0 | ... | Core goal | ... |
+| R1 | ... | Must-have | ... |
+
+## Definition of done
+- [Observable outcome that means this project shipped]
+
+## Out of scope
 - [Thing we're explicitly not doing]
+
+## Decisions
+
+| Decided | Decision | Reason |
+|---|---|---|
+| YYYY-MM-DD | [What was decided] | [One-line why] |
+
+## Design reference
+[Figma link, or _TBD_ if not yet available]
 
 ## Open questions
 - [Question for the team]
 - [Stakeholder to align with]
-
-## Assumptions
-- [Load-bearing belief that should be tested]
-
-## Risks (from pre-mortem)
-- [Most likely failure mode]
 ```
 
-Keep R notation in the requirements table so prd can preserve it. The prd skill explicitly accepts custom requirements formats from shaping.
+Keep R notation in the requirements table so prd can preserve it. The handoff format matches the prd skill's input expectations one-for-one — don't reshape it.
 
 ## Communication
 

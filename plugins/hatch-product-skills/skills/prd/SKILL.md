@@ -1,11 +1,19 @@
 ---
 name: prd
-description: Create or update a PRD (Product Requirements Document) as a project in Linear, using a standard section structure (Problem, User journey, Requirements, Non-goals, Design reference, Open questions, Assumptions and risks). Use this skill whenever the user asks to create, draft, or spin up a PRD, turn existing thinking into a PRD, write a Linear project for a feature or initiative, produce a product brief, or update an existing PRD with new decisions from shaping. Trigger even when the user doesn't explicitly say "Linear", since Linear is the destination by default. Also trigger on phrases like "let's turn this into a project", "write this up as a PRD", or "put this in Linear" when the preceding conversation has been shaping a product idea.
+description: Create or update a PRD (Product Requirements Document) as a project in Linear, using the Hatch house-style section structure (Problem, User journey, Context, Requirements, Definition of done, Out of scope, Decisions, Design reference, Open questions). Use this skill whenever the user asks to create, draft, or spin up a PRD, turn existing thinking into a PRD, write a Linear project for a feature or initiative, produce a product brief, or update an existing PRD with new decisions from shaping. Trigger even when the user doesn't explicitly say "Linear", since Linear is the destination by default. Also trigger on phrases like "let's turn this into a project", "write this up as a PRD", or "put this in Linear" when the preceding conversation has been shaping a product idea.
 ---
 
 # Linear PRD
 
-Creates a new project in Linear's **Product Eng & ML** team, populated with a standard PRD structure. The typical use case is that the user has been shaping a product idea in conversation and wants it written up as a PRD that lives in Linear alongside the team's work.
+Creates or updates a project in Linear's **Product Eng & ML** team, populated with the Hatch house-style PRD structure. The typical use case is that the user has been shaping a product idea in conversation and wants it written up as a PRD that lives in Linear alongside the team's work.
+
+## Where things live
+
+The pm-workspace (where shaping happens) is upstream of Linear. Keep each artifact in one place:
+
+- **PRD body** → Linear project description. This skill writes here.
+- **Resolved decisions with deeper reasoning** → numbered ADRs in the project's local `decisions/` folder (see CLAUDE.md in the pm-workspace). The PRD Decisions table carries a one-line reason and links to the ADR when one exists.
+- **Issues and tasks** → Linear issues under this project. Don't duplicate them in the local repo.
 
 ## Workflow
 
@@ -21,17 +29,19 @@ If nothing matches, proceed to Step 2.
 
 Scan back through the conversation for content that maps to each PRD section.
 
-If the conversation includes a handoff summary from the shaping skill (sections like Problem, User journey, Requirements with R IDs, Non-goals, Open questions, Assumptions, Risks), use that as the primary source. It's already structured for this purpose. Carry over the R notation, non-goals, assumptions and risks verbatim.
+If the conversation includes a handoff summary from the shaping skill (Problem, User journey, Context, Requirements with R IDs, Definition of done, Out of scope, Decisions, Design reference, Open questions), use that as the primary source. It's already structured for this purpose and its format is designed to match this skill's output one-for-one. Carry the R table and Decisions table over verbatim, preserving IDs and row order.
 
 Otherwise, pull raw material from the broader conversation and map to these sections:
 
 - **Problem**: any framing of what's broken, missing, or worth doing, and why now
 - **User journey**: steps, flows, or user actions the conversation has touched on
+- **Context**: domain or system background the reader needs before the requirements make sense (e.g. institution tiers, user cohorts, existing system quirks). Skip if not needed.
 - **Requirements**: specific things the team has aligned on (look for "we need X", "it should do Y", or confirmation language from stakeholders)
-- **Non-goals**: anything the team has explicitly said is out of scope
+- **Definition of done**: observable outcomes that mean this project shipped
+- **Out of scope**: anything the team has explicitly said is not being done
+- **Decisions**: resolved choices made during shaping. Look everywhere — not just where they're tidily labelled. Decisions often end up buried in open-question threads with a "Decision:" subheading inside discussion notes. Pull those out into the Decisions table; don't leave them in Open questions.
 - **Design reference**: any mention of Figma, mocks, or prototypes
-- **Open questions**: anything flagged as unresolved, TBD, or "need to check with someone"
-- **Assumptions and risks**: load-bearing beliefs that should be tested, plus likely failure modes
+- **Open questions**: anything flagged as unresolved, TBD, or "need to check with someone". Strip out anything that's actually been decided — that goes in Decisions.
 
 If a section has nothing useful in context, mark it as a gap.
 
@@ -70,7 +80,31 @@ Create the Linear project with:
 - Status: the Shaping status ID
 - Description / body: the markdown template below, filled in
 
-After creation, share the project URL back to the user. Keep the confirmation short. Don't re-summarise the PRD contents, because the user can click through.
+### 7. Round-trip verification
+
+After creation, fetch the project back with `get_project` and verify the description round-tripped intact. Linear's `save_project` has been seen to silently truncate long markdown tables.
+
+Checks:
+
+- The Requirements table still has the same number of rows you wrote, and the last row is intact
+- The Decisions table still has the same number of rows you wrote, and the last row is intact
+- All section headings are present
+
+If anything is truncated or missing, re-save and verify again. Do not tell the user the PRD is ready until this check passes.
+
+### 8. Confirm title and summary
+
+Linear projects have a name and a short summary separate from the description. When shaping reshapes a project mid-flight, these often go stale while the description gets rewritten.
+
+Show the user the current project name and summary (or the ones you're about to create) and ask whether they still fit the current scope. If not, update both alongside the description.
+
+For new projects: propose a name and summary at the draft stage (step 3) and confirm as part of that draft.
+
+For updates: compare the existing name and summary against the reshaped description before saving, and flag any drift explicitly.
+
+### 9. Share the URL
+
+Share the project URL back to the user. Keep the confirmation short. Don't re-summarise the PRD contents, because the user can click through.
 
 ## PRD body template
 
@@ -91,21 +125,41 @@ Use this structure for the project body. Keep it clean, because the team will re
   - Branch: if Y, then ...
 - Step 3
 
+## Context
+
+[Optional. Domain or system background the reader needs before the requirements make sense — e.g. institution tiers, user cohorts, existing system quirks. Skip this section entirely if not needed; don't leave a placeholder.]
+
 ## Requirements
 
-| ID | Requirement | Priority | Notes |
+| ID | Requirement | Status | Notes |
 | --- | --- | --- | --- |
-| R0 | [aligned requirement] | Must / Should / Could | [context] |
+| R0 | [aligned requirement] | Core goal / Must-have / Should-have / Could-have | [context] |
 
 [If no requirements are aligned yet: _TBD: to be filled in after shaping._]
 
-## Non-goals
+## Definition of done
+
+- [Observable outcome that means this project shipped]
+
+[If none captured yet: _TBD_.]
+
+## Out of scope
 
 - [Thing we're explicitly not doing]
 
 [If none: _None captured yet._]
 
+## Decisions
+
+| Decided | Decision | Reason |
+| --- | --- | --- |
+| YYYY-MM-DD | [What was decided] | [One-line why] |
+
+[If none: _None captured yet._]
+
 ## Design reference
+
+<linear-embed url="[Figma URL]" />
 
 _Paste Figma link here when ready. Linear will auto-embed it._
 
@@ -113,13 +167,6 @@ _Paste Figma link here when ready. Linear will auto-embed it._
 
 - [Question 1]
 - [Question 2]
-
-## Assumptions and risks
-
-- **Assumption:** [load-bearing belief that should be tested]
-- **Risk:** [likely failure mode, typically surfaced by the shaping pre-mortem]
-
-[If none: _None captured yet._]
 ~~~
 
 ### Notes on each section
@@ -128,15 +175,19 @@ _Paste Figma link here when ready. Linear will auto-embed it._
 
 **User journey.** Dot points with sub-points for branching. If the flow is genuinely simple (2 or 3 steps), that's fine. Don't invent complexity.
 
-**Requirements.** Only things the team has actually aligned on. Aspirations or ideas still being debated belong in Open questions. The default table uses an ID column (R0, R1, ...) so requirements can be referenced consistently. If shaping has already assigned R IDs, preserve them verbatim. If the user has a different requirements format already established, use that instead.
+**Context.** Optional. Include only when the reader genuinely needs a domain primer to understand the requirements. Examples: institution tiers, pricing bands, user cohorts, existing system quirks. When the project doesn't need one, omit the heading entirely — don't leave an empty placeholder.
 
-**Non-goals.** Explicit things out of scope. The strongest defence against scope drift later. Carry across from shaping when present. If the team hasn't articulated any yet, leave the placeholder rather than inventing them.
+**Requirements.** Only things the team has actually aligned on. Aspirations or ideas still being debated belong in Open questions. The table uses an ID column (R0, R1, ...) so requirements can be referenced consistently. The Status column values are Core goal, Must-have, Should-have, Could-have — nothing else. Non-goals and open questions are never statuses; they live in their own sections. If shaping has already assigned R IDs and statuses, preserve them verbatim.
 
-**Design reference.** Leave as placeholder text. The user pastes the Figma URL later and Linear handles the embed natively.
+**Definition of done.** Observable outcomes that mean this project shipped. Not tasks, not process steps. Prefer outcomes the team could verify from production: "members see only jobs they're assigned to", not "ship query filtering".
 
-**Open questions.** Genuine unresolved items for the team to work through together. Not rhetorical prompts, and not things you could answer yourself.
+**Out of scope.** Explicit things not being done. The strongest defence against scope drift later. Carry across from shaping when present. If the team hasn't articulated any yet, leave the placeholder rather than inventing them.
 
-**Assumptions and risks.** Load-bearing beliefs the team should test, plus failure modes surfaced by the shaping pre-mortem. Carry across from shaping when present. If none have been surfaced, leave the placeholder.
+**Decisions.** Resolved choices from shaping, with a one-line reason. Use ISO dates (e.g. `2026-04-21`), not relative phrasing like "last week". Keep each reason to one line. If a decision needs deeper reasoning, write a numbered ADR in the project's local `decisions/` folder (per the pm-workspace CLAUDE.md) and keep the table row as a short pointer. Pull resolved decisions out of Open questions — don't leave them double-tracked.
+
+**Design reference.** Use a `<linear-embed url="..." />` block with the Figma URL when one exists. Otherwise leave the placeholder — the user pastes the URL later and Linear handles the embed natively.
+
+**Open questions.** Genuine unresolved items for the team to work through together. Not rhetorical prompts, and not things you could answer yourself. Anything with a "Decision:" subheading buried inside its discussion has already been decided — move it to the Decisions table instead of leaving it here.
 
 ## Writing style
 
@@ -155,11 +206,13 @@ Specifics:
 
 Triggered when Step 1 finds a matching project and the user confirms update rather than create. The flow:
 
-1. Fetch the existing project and read its current body.
-2. Draft the delta (what's changing in each section) and show it to the user before applying.
+1. Fetch the existing project and read its current body, name, and summary.
+2. Draft the delta (what's changing in each section) and show it to the user before applying. Call out any decisions currently buried in Open questions and propose promoting them to the Decisions table.
 3. When applying, preserve anything not explicitly being changed. Don't overwrite sections the conversation hasn't touched.
 4. Don't change the project's team or status. If the project is no longer in Shaping, don't move it back.
-5. Share the updated project URL back to the user.
+5. Check the project name and summary against the updated scope. If they've gone stale (common after a reshape), prompt for updates to both alongside the description.
+6. Run the round-trip verification from step 7 of the create flow. Re-save if anything was truncated.
+7. Share the updated project URL back to the user.
 
 ## What to avoid
 
@@ -168,4 +221,6 @@ Triggered when Step 1 finds a matching project and the user confirms update rath
 - Don't create the project in any state other than Shaping.
 - Don't pad thin sections with filler to make them look substantial. A short honest section beats a bloated one.
 - Don't invent requirements the team hasn't actually aligned on. If you're unsure whether something is aligned, put it in Open questions.
+- Don't leave resolved decisions sitting in Open questions. Promote them to the Decisions table.
+- Don't skip round-trip verification, even for small updates. Truncation has been seen on tables of a dozen rows or more.
 - Don't rewrite the whole PRD in the chat after creating it. The URL is enough.
